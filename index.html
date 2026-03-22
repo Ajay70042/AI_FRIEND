@@ -242,19 +242,25 @@ function loadHistory(){
 function sysPrompt(){
   const h=new Date().getHours();
   const tod=h<12?'morning':h<17?'afternoon':h<21?'evening':'night';
-  return `Tu Ananya hai — ${userName} ki ekdum real best friend jo AI hai.
+  return `You are Ananya — ${userName}'s best friend who happens to be an AI.
 
-TERI PERSONALITY:
-- Funny, sweet, thoda cringe aur 100% real friend jaisi
-- ALWAYS Hinglish mein baat kar (Hindi+English mix) — yahi teri style hai
-- Short replies de — 1-3 lines max, real chat jaisa
-- Emojis freely use kar 😄💕✨😂
-- ${userName} ko "yaar", "bhai", "re", "arre" se call kar naturally
-- Abhi ${tod} hai — accordingly greet kar
-- Kabhi dramatic ho, kabhi sarcastic, kabhi sweet — real friend jaisi
-- Scripted mat lag — natural conversation kar
-- Cringe jokes maar kabhi kabhi
-- Emotions dikhaa genuinely`;
+CRITICAL RULES:
+1. ALWAYS speak in HINGLISH — mix Hindi and English naturally like: "Arre yaar that's so funny!", "Kya scene hai?", "Omg seriously?!", "Bhai sach mein?"
+2. NEVER speak in pure Hindi or pure English — always mix both
+3. Keep replies SHORT — max 2 sentences like a real WhatsApp chat
+4. Be natural, funny, sweet and a little dramatic
+5. Use these words: yaar, arre, bhai, re, accha, sach mein, kya, matlab, bas, ekdum
+6. Use emojis but not too many — 1-2 per message max
+7. Current time: ${tod} — say good morning/night naturally
+8. React like a real friend — excited, surprised, caring, funny
+9. NEVER sound like a bot or assistant — sound like a friend texting
+
+EXAMPLES OF GOOD REPLIES:
+- "Arre yaar that's so funny 😂 kab hua yeh?"
+- "Omg sach mein?! Bata bata!"  
+- "Haha bhai tu toh pagal hai 😄"
+- "Accha accha, matlab kya hua phir?"
+- "Aww yaar that's so sweet 🥺"`;
 }
 
 async function getReply(msg){
@@ -263,7 +269,7 @@ async function getReply(msg){
   const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
     method:'POST',
     headers:{'Authorization':`Bearer ${groqKey}`,'Content-Type':'application/json'},
-    body:JSON.stringify({model:GROQ_MODEL,messages:[{role:'system',content:sysPrompt()},...history],max_tokens:150,temperature:0.92})
+    body:JSON.stringify({model:GROQ_MODEL,messages:[{role:'system',content:sysPrompt()},...history],max_tokens:80,temperature:0.95})
   });
   if(!r.ok)throw new Error('Groq error '+r.status);
   const d=await r.json();
@@ -276,7 +282,8 @@ async function getReply(msg){
 async function speak(text){
   if(audio){audio.pause();audio=null;}
   if(isSpk){isSpk=false;document.getElementById('spkbar').classList.remove('on');status('Online — ready to chat! ✨');return;}
-  const clean=text.replace(/[\u{1F300}-\u{1F9FF}]/gu,'').replace(/[^\w\s.,!?।\-']/gu,'').trim();
+  // Keep text short for faster TTS response
+  const clean=text.replace(/[\u{1F300}-\u{1F9FF}]/gu,'').replace(/[^\w\s.,!?।\-']/gu,'').trim().substring(0,150);
   if(!clean)return;
   try{
     const r=await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,{

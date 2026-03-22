@@ -287,24 +287,45 @@ function setStatus(mode){
 }
 
 // ── Live2D ──
-let mouthTimer=null;
-function startMouthAnim(){
-  if(mouthTimer) return;
-  mouthTimer=setInterval(()=>{
-    if(live2dModel && live2dModel.internalModel){
-      try{
-        const v=0.3+Math.random()*0.7;
-        live2dModel.internalModel.coreModel.setParameterValueById('ParamMouthOpenY',v);
-      }catch(e){}
+let audioCtx=null, analyser=null, mouthRAF=null;
+
+function startLipSync(audioElement){
+  try{
+    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    const source=audioCtx.createMediaElementSource(audioElement);
+    analyser=audioCtx.createAnalyser();
+    analyser.fftSize=256;
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    const dataArray=new Uint8Array(analyser.frequencyBinCount);
+    function animate(){
+      mouthRAF=requestAnimationFrame(animate);
+      analyser.getByteFrequencyData(dataArray);
+      // Get average volume from speech frequencies (300-3000 Hz)
+      let sum=0;
+      for(let i=3;i<30;i++) sum+=dataArray[i];
+      const avg=sum/27;
+      const mouth=Math.min(1, avg/80);
+      if(live2dModel && live2dModel.internalModel){
+        try{
+          live2dModel.internalModel.coreModel.setParameterValueById('ParamMouthOpenY', mouth);
+        }catch(e){}
+      }
     }
-  },100);
+    animate();
+  }catch(e){console.error('LipSync error:',e);}
 }
-function stopMouthAnim(){
-  if(mouthTimer){clearInterval(mouthTimer);mouthTimer=null;}
+
+function stopLipSync(){
+  if(mouthRAF){cancelAnimationFrame(mouthRAF);mouthRAF=null;}
   if(live2dModel && live2dModel.internalModel){
     try{live2dModel.internalModel.coreModel.setParameterValueById('ParamMouthOpenY',0);}catch(e){}
   }
 }
+
+function startMouthAnim(){} // kept for compatibility
+function stopMouthAnim(){ stopLipSync(); }
 
 async function initLive2D(){
   try{
@@ -524,9 +545,11 @@ async function speak(text){
     const blob=await r.blob();
     const url=URL.createObjectURL(blob);
     audio=new Audio(url);
+    audio.crossOrigin='anonymous';
     isSpk=true;
-    audio.onended=()=>{isSpk=false;audio=null;URL.revokeObjectURL(url);setStatus('idle');startListening();};
-    audio.onerror=()=>{isSpk=false;audio=null;setStatus('idle');startListening();};
+    audio.onplay=()=>{ startLipSync(audio); };
+    audio.onended=()=>{stopLipSync();isSpk=false;audio=null;URL.revokeObjectURL(url);setStatus('idle');startListening();};
+    audio.onerror=()=>{stopLipSync();isSpk=false;audio=null;setStatus('idle');startListening();};
     audio.play();
   }catch(e){
     console.error('TTS:',e);

@@ -116,7 +116,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   <div class="setup-title">Meet Ananya</div>
   <div class="setup-sub">Your funny, sweet & cringe AI friend who speaks Hinglish! 😄<br>Enter your API keys to get started.</div>
   <input class="setup-input" type="password" id="groqKey" placeholder="🤖 Groq API Key">
-  <input class="setup-input" type="password" id="elevenKey" placeholder="🎤 ElevenLabs API Key">
+
   <input class="setup-input" type="text" id="userName" placeholder="👤 Your name (so Ananya knows you!)">
   <button class="setup-btn" onclick="startApp()">Meet Ananya! 💕</button>
   <div class="setup-note">Your API keys are stored only on your device.<br>Never shared with anyone. 🔒</div>
@@ -187,11 +187,10 @@ function showToast(msg,d=2500){const t=document.getElementById('toast');t.textCo
 
 function startApp(){
   groqKey=document.getElementById('groqKey').value.trim();
-  elevenKey=document.getElementById('elevenKey').value.trim();
   userName=document.getElementById('userName').value.trim()||'yaar';
-  if(!groqKey||!elevenKey){showToast('Please enter both API keys!');return;}
+  if(!groqKey){showToast('Please enter Groq API key!');return;}
   localStorage.setItem('ananya_groq',groqKey);
-  localStorage.setItem('ananya_eleven',elevenKey);
+
   localStorage.setItem('ananya_user',userName);
   document.getElementById('setupScreen').style.display='none';
   loadMemory(); sendWelcome();
@@ -199,11 +198,11 @@ function startApp(){
 
 function loadKeys(){
   groqKey=localStorage.getItem('ananya_groq')||'';
-  elevenKey=localStorage.getItem('ananya_eleven')||'';
+
   userName=localStorage.getItem('ananya_user')||'yaar';
   memory=JSON.parse(localStorage.getItem('ananya_memory')||'{}');
   chatHistory=JSON.parse(localStorage.getItem('ananya_history')||'[]');
-  if(groqKey&&elevenKey){
+  if(groqKey){
     document.getElementById('setupScreen').style.display='none';
     loadChatHistory();
     if(chatHistory.length===0) sendWelcome();
@@ -269,27 +268,45 @@ async function speakText(text){
   if(currentAudio){currentAudio.pause();currentAudio=null;}
   const clean=text.replace(/[\u{1F300}-\u{1F9FF}]/gu,'').trim();
   try{
-    const res=await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,{
-      method:'POST',
-      headers:{'xi-api-key':elevenKey,'Content-Type':'application/json'},
-      body:JSON.stringify({text:clean,model_id:'eleven_multilingual_v2',voice_settings:{stability:0.5,similarity_boost:0.8,style:0.4,use_speaker_boost:true}})
-    });
-    if(!res.ok) throw new Error('ElevenLabs error '+res.status);
-    const blob=await res.blob();
-    const url=URL.createObjectURL(blob);
+    // Use Google Translate TTS - free, no API key, no CORS issues
+    const encoded=encodeURIComponent(clean.substring(0,200));
+    const url=`https://translate.google.com/translate_tts?ie=UTF-8&q=${encoded}&tl=hi&client=tw-ob`;
     currentAudio=new Audio(url);
+    currentAudio.crossOrigin='anonymous';
     document.getElementById('speakingBar').classList.add('visible');
     isSpeaking=true; updateStatus('Speaking... 🔊');
     currentAudio.onended=()=>{
       document.getElementById('speakingBar').classList.remove('visible');
       isSpeaking=false; updateStatus('Online — ready to chat! ✨');
-      URL.revokeObjectURL(url);
+    };
+    currentAudio.onerror=()=>{
+      // Fallback to Web Speech API
+      const utterance=new SpeechSynthesisUtterance(clean);
+      utterance.lang='hi-IN'; utterance.rate=0.9; utterance.pitch=1.1;
+      const voices=window.speechSynthesis.getVoices();
+      const hindiVoice=voices.find(v=>v.lang.includes('hi')||v.name.includes('female')||v.name.includes('Female'));
+      if(hindiVoice) utterance.voice=hindiVoice;
+      document.getElementById('speakingBar').classList.add('visible');
+      isSpeaking=true; updateStatus('Speaking... 🔊');
+      utterance.onend=()=>{
+        document.getElementById('speakingBar').classList.remove('visible');
+        isSpeaking=false; updateStatus('Online — ready to chat! ✨');
+      };
+      window.speechSynthesis.speak(utterance);
     };
     currentAudio.play();
   }catch(e){
     console.error('TTS:',e);
-    document.getElementById('speakingBar').classList.remove('visible');
-    isSpeaking=false; updateStatus('Online — ready to chat! ✨');
+    // Final fallback - Web Speech API
+    const utterance=new SpeechSynthesisUtterance(clean);
+    utterance.lang='hi-IN'; utterance.rate=0.9; utterance.pitch=1.1;
+    window.speechSynthesis.speak(utterance);
+    document.getElementById('speakingBar').classList.add('visible');
+    isSpeaking=true; updateStatus('Speaking... 🔊');
+    utterance.onend=()=>{
+      document.getElementById('speakingBar').classList.remove('visible');
+      isSpeaking=false; updateStatus('Online — ready to chat! ✨');
+    };
   }
 }
 

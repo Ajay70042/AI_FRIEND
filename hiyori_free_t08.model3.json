@@ -10,38 +10,38 @@
 		"Motions": {
 			"Idle": [
 				{
-					"File": "motion/hiyori_m01.motion3.json"
+					"File": "hiyori_m01.motion3.json"
 				},
 				{
-					"File": "motion/hiyori_m02.motion3.json"
+					"File": "hiyori_m02.motion3.json"
 				},
 				{
-					"File": "motion/hiyori_m05.motion3.json"
+					"File": "hiyori_m05.motion3.json"
 				}
 			],
 			"Flick": [
 				{
-					"File": "motion/hiyori_m03.motion3.json"
+					"File": "hiyori_m03.motion3.json"
 				}
 			],
 			"FlickDown": [
 				{
-					"File": "motion/hiyori_m04.motion3.json"
+					"File": "hiyori_m04.motion3.json"
 				}
 			],
 			"Tap": [
 				{
-					"File": "motion/hiyori_m06.motion3.json"
+					"File": "hiyori_m06.motion3.json"
 				}
 			],
 			"Tap@Body": [
 				{
-					"File": "motion/hiyori_m07.motion3.json"
+					"File": "hiyori_m07.motion3.json"
 				}
 			],
 			"Flick@Body": [
 				{
-					"File": "motion/hiyori_m08.motion3.json"
+					"File": "hiyori_m08.motion3.json"
 				}
 			]
 		}

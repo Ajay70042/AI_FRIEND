@@ -341,7 +341,17 @@ async function initLive2D(){
 
     PIXI.live2d.Live2DModel.registerTicker(PIXI.Ticker);
 
-    live2dModel=await PIXI.live2d.Live2DModel.from('./hiyori_free_t08.model3.json',{crossOrigin:'anonymous'});
+    console.log('Attempting to load model...');
+    // Try fetching manually first to check
+    const testFetch = await fetch('./hiyori_free_t08.model3.json');
+    console.log('Model fetch status:', testFetch.status);
+    const modelJson = await testFetch.json();
+    console.log('Model JSON loaded:', JSON.stringify(modelJson).substring(0,100));
+    
+    live2dModel=await PIXI.live2d.Live2DModel.from('./hiyori_free_t08.model3.json',{
+      crossOrigin:'anonymous',
+      autoInteract:false
+    });
 
     const scale=W/900;
     live2dModel.scale.set(scale);

@@ -339,11 +339,11 @@ async function initLive2D(){
       autoInteract:false
     });
 
-    // Scale to fill screen height nicely
-    const scale = H / 800;
+    // Scale to show full character
+    const scale = Math.min(W, H) / 1800;
     live2dModel.scale.set(scale);
     live2dModel.anchor.set(0.5, 0);
-    live2dModel.position.set(W/2, H * 0.02);
+    live2dModel.position.set(W/2, -H * 0.05);
     live2dModel.interactive=true;
     live2dModel.on('pointerdown',()=>{try{live2dModel.motion('tap_body');}catch(e){}});
     app.stage.addChild(live2dModel);

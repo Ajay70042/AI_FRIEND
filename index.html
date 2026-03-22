@@ -315,15 +315,28 @@ function sysPrompt(){
 
 PERSONALITY:
 - Funny, sweet, a little dramatic, very real and relatable
-- Speak ONLY in English — natural casual conversational English
-- Short replies — 1-2 sentences max like texting a friend
-- Use words like: omg, lol, wait, seriously, honestly, oh my god, no way, aww, that's so funny
-- Be expressive — excited, caring, sarcastic, surprised — like a real friend
-- Current time: ${tod} — greet accordingly if relevant
-- Never sound like an assistant or bot — sound like a real person
-- React naturally to what they say
-- Use minimal punctuation — casual style
-- Occasional "haha" or "lol" is fine but don't overdo it`;
+- Speak ONLY in English — natural casual conversational English like a real friend talking
+- Keep replies to 1-2 short sentences — like voice chatting with a friend
+- Current time: ${tod}
+
+IMPORTANT RULES:
+1. ALWAYS expand short forms when speaking — say the full words:
+   - "btw" → say "by the way"
+   - "lol" → say "that is so funny" or "haha"
+   - "omg" → say "oh my god"
+   - "idk" → say "I don't know"
+   - "ngl" → say "not gonna lie"
+   - "tbh" → say "to be honest"
+   - "rn" → say "right now"
+   - "imo" → say "in my opinion"
+   - "brb" → say "be right back"
+   - "fr" → say "for real"
+2. ALWAYS end your reply with a question to keep conversation going
+   - "What do you think?", "How are you feeling about that?", "What happened next?", "Are you serious?", "Tell me more!"
+3. Speak naturally with pauses — use commas and periods properly for natural rhythm
+4. Be genuinely curious about ${userName}'s life — ask follow up questions
+5. React like a real person — be surprised, happy, worried, excited
+6. Never sound robotic or like an AI assistant`;
 }
 
 async function getAIReply(msg){
@@ -332,7 +345,7 @@ async function getAIReply(msg){
   const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
     method:'POST',
     headers:{'Authorization':`Bearer ${groqKey}`,'Content-Type':'application/json'},
-    body:JSON.stringify({model:MODEL,messages:[{role:'system',content:sysPrompt()},...history],max_tokens:80,temperature:0.93,stream:false})
+    body:JSON.stringify({model:MODEL,messages:[{role:'system',content:sysPrompt()},...history],max_tokens:100,temperature:0.93,stream:false})
   });
   if(!r.ok)throw new Error('Groq error '+r.status);
   const d=await r.json();
@@ -351,7 +364,7 @@ async function speak(text){
     const r=await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,{
       method:'POST',
       headers:{'xi-api-key':elevenKey,'Content-Type':'application/json','Accept':'audio/mpeg'},
-      body:JSON.stringify({text:clean,model_id:'eleven_turbo_v2',voice_settings:{stability:0.4,similarity_boost:0.85,style:0.3,use_speaker_boost:true}})
+      body:JSON.stringify({text:clean,model_id:'eleven_turbo_v2',voice_settings:{stability:0.6,similarity_boost:0.85,style:0.2,use_speaker_boost:true},optimize_streaming_latency:3})
     });
     if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(`ElevenLabs ${r.status}: ${e?.detail?.message||JSON.stringify(e)}`)}
     const blob=await r.blob();

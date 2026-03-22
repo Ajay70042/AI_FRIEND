@@ -395,12 +395,12 @@ function startApp(){
   groqKey=document.getElementById('groqKey').value.trim();
   azureKey=document.getElementById('azureKey').value.trim();
   userName=document.getElementById('uname').value.trim()||'friend';
-  if(!groqKey||!azureKey){toast('Please fill all fields!');return;}
+  if(!groqKey){toast('Please enter Groq API key! 😅');return;}
+  if(!azureKey){toast('Please enter Azure API key! 😅');return;}
   saveAll();
   document.getElementById('setup').style.display='none';
   initLive2D();
   sendWelcome();
-  // Start wake word after welcome
   setTimeout(startWakeWordListener, 4000);
 }
 

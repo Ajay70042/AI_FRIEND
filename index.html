@@ -236,13 +236,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);max
 
 <div class="toast" id="toast"></div>
 
-<!-- Live2D SDK -->
+<!-- Live2D SDK — ORDER MATTERS -->
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js"></script>
+<script src="https://unpkg.com/live2dcubismcore@5.0.0/live2dcubismcore.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js"></script>
-<script>
-// Polyfill for Cubism Core if not loaded via CDN
-window.Live2DCubismCore = window.Live2DCubismCore || null;
-</script>
 
 <script>
 let groqKey='', elevenKey='', voiceId='', userName='friend';
@@ -344,7 +341,7 @@ async function initLive2D(){
 
     PIXI.live2d.Live2DModel.registerTicker(PIXI.Ticker);
 
-    live2dModel=await PIXI.live2d.Live2DModel.from('./hiyori_free_t08.model3.json');
+    live2dModel=await PIXI.live2d.Live2DModel.from('./hiyori_free_t08.model3.json',{crossOrigin:'anonymous'});
 
     const scale=W/900;
     live2dModel.scale.set(scale);

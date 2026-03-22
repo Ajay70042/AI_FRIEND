@@ -10,56 +10,74 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--p1:#f472b6;--p2:#a855f7;--p3:#6366f1;--bg:#07071a;--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.09);--text:#f0f0ff;--muted:rgba(240,240,255,0.45)}
+:root{--p1:#f472b6;--p2:#a855f7;--p3:#6366f1;--bg:#07071a;--card:rgba(255,255,255,0.06);--border:rgba(255,255,255,0.1);--text:#f0f0ff;--muted:rgba(240,240,255,0.45)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);max-width:430px;margin:0 auto;display:flex;flex-direction:column;overflow:hidden;position:relative}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
 
-/* BG blobs */
+/* BG */
 .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.blob{position:absolute;border-radius:50%;filter:blur(90px);animation:float 12s ease-in-out infinite}
-.b1{width:320px;height:320px;background:rgba(244,114,182,0.2);top:-120px;left:-80px}
-.b2{width:280px;height:280px;background:rgba(168,85,247,0.18);bottom:80px;right:-80px;animation-delay:-5s}
-.b3{width:220px;height:220px;background:rgba(99,102,241,0.18);top:35%;left:15%;animation-delay:-9s}
-@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(18px,-18px) scale(1.04)}}
+.blob{position:absolute;border-radius:50%;filter:blur(100px);animation:float 12s ease-in-out infinite}
+.b1{width:500px;height:500px;background:rgba(244,114,182,0.15);top:-200px;left:-100px}
+.b2{width:400px;height:400px;background:rgba(168,85,247,0.12);bottom:0;right:-100px;animation-delay:-5s}
+.b3{width:350px;height:350px;background:rgba(99,102,241,0.12);top:30%;left:30%;animation-delay:-9s}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-20px)}}
 
 /* Setup */
-.setup{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 24px;overflow-y:auto}
+.setup{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;overflow-y:auto}
 .setup-avatar{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--p2),var(--p3));display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 20px;box-shadow:0 0 40px rgba(244,114,182,0.5);animation:spulse 2s ease-in-out infinite}
-@keyframes spulse{0%,100%{box-shadow:0 0 30px rgba(244,114,182,0.4)}50%{box-shadow:0 0 60px rgba(244,114,182,0.7)}}
-.setup-title{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--p1),var(--p2),var(--p3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:6px}
-.setup-sub{font-size:14px;color:var(--muted);text-align:center;margin-bottom:24px;line-height:1.7}
-.sinput{width:100%;padding:13px 18px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;margin-bottom:10px;transition:border 0.2s}
+@keyframes spulse{0%,100%{box-shadow:0 0 30px rgba(244,114,182,0.4)}50%{box-shadow:0 0 60px rgba(244,114,182,0.8)}}
+.setup-title{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;background:linear-gradient(135deg,var(--p1),var(--p2),var(--p3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-bottom:8px}
+.setup-sub{font-size:15px;color:var(--muted);text-align:center;margin-bottom:28px;line-height:1.7;max-width:400px}
+.sform{width:100%;max-width:420px}
+.sinput{width:100%;padding:14px 18px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;margin-bottom:10px;transition:border 0.2s}
 .sinput:focus{border-color:var(--p1);background:rgba(244,114,182,0.06)}
 .sinput::placeholder{color:var(--muted)}
 .sbtn{width:100%;padding:15px;background:linear-gradient(135deg,var(--p1),var(--p2),var(--p3));color:#fff;border:none;border-radius:14px;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;box-shadow:0 8px 30px rgba(244,114,182,0.4);transition:transform 0.2s}
 .sbtn:active{transform:scale(0.97)}
 .snote{font-size:11px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.7}
 
-/* Live2D canvas area */
-.live2d-area{position:relative;z-index:1;width:100%;height:280px;overflow:hidden;flex-shrink:0;background:linear-gradient(180deg,rgba(244,114,182,0.05) 0%,transparent 100%)}
-#live2d-canvas{width:100%;height:100%;display:block}
-.live2d-overlay{position:absolute;inset:0;pointer-events:none}
-.live2d-glow{position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,var(--bg),transparent)}
+/* Main layout — PC style side by side */
+.main-layout{position:relative;z-index:1;display:flex;height:100vh;width:100%}
 
-/* Status bar below Live2D */
-.statusbar{position:relative;z-index:2;padding:8px 20px 10px;background:rgba(7,7,26,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);flex-shrink:0}
-.sbar-row{display:flex;align-items:center;gap:10px}
-.sbar-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;background:linear-gradient(135deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sbar-status{font-size:12px;color:var(--muted);flex:1;transition:color 0.3s}
-.sbar-status.speaking{color:#f59e0b}
-.sbar-status.listening{color:#818cf8}
-.sbar-status.online{color:#10b981}
+/* Left — Live2D */
+.left-panel{width:55%;height:100vh;position:relative;display:flex;flex-direction:column;flex-shrink:0}
+.live2d-wrap{flex:1;position:relative;overflow:hidden}
+#live2d-canvas{width:100%;height:100%;display:block}
+.live2d-glow-bottom{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to top,var(--bg),transparent);pointer-events:none;z-index:2}
+.live2d-glow-top{position:absolute;top:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,var(--bg),transparent);pointer-events:none;z-index:2}
+.name-badge{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:3;text-align:center}
+.name-badge-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.name-badge-status{font-size:12px;color:var(--muted);margin-top:2px;transition:color 0.3s}
+.name-badge-status.speaking{color:#f59e0b}
+.name-badge-status.listening{color:#818cf8}
+.name-badge-status.online{color:#10b981}
+
+/* Loading overlay */
+.l2d-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:10}
+.l2d-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--p1);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.l2d-txt{font-size:13px;color:var(--muted)}
+
+/* Right — Chat */
+.right-panel{flex:1;display:flex;flex-direction:column;height:100vh;border-left:1px solid var(--border);background:rgba(7,7,26,0.6);backdrop-filter:blur(20px)}
+
+/* Top bar */
+.topbar{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
 .odot{width:10px;height:10px;border-radius:50%;background:#10b981;transition:background 0.3s;flex-shrink:0}
 .odot.speaking{background:#f59e0b;animation:blink 0.6s ease-in-out infinite}
 .odot.listening{background:#818cf8;animation:blink 0.6s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-.sbar-btns{display:flex;gap:6px}
-.sbarbtn{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:all 0.2s}
-.sbarbtn:active{transform:scale(0.88)}
+.topbar-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-status{font-size:12px;color:var(--muted);flex:1;transition:color 0.3s}
+.topbar-status.speaking{color:#f59e0b}
+.topbar-status.listening{color:#818cf8}
+.topbar-status.online{color:#10b981}
+.tbtn{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:all 0.2s}
+.tbtn:active{transform:scale(0.88)}
 
-/* Voice waves bar */
-.voicebar{display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;transition:all 0.3s}
+/* Voice bar */
+.voicebar{margin:0 16px 8px;padding:8px 14px;border-radius:12px;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border);transition:all 0.3s;flex-shrink:0}
 .voicebar.listening{background:rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.2)}
 .voicebar.speaking{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.2)}
 .vwaves{display:flex;gap:2px;align-items:center}
@@ -68,12 +86,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);max
 @keyframes vwave{0%,100%{transform:scaleY(0.3)}50%{transform:scaleY(1)}}
 .vtxt{font-size:11px;font-weight:600;color:var(--muted);flex:1;transition:color 0.3s}
 .vstop{font-size:11px;color:var(--muted);background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:7px;padding:3px 10px;cursor:pointer;display:none;white-space:nowrap}
-.vstop:active{background:rgba(255,255,255,0.12)}
 
-/* Chat area */
-.chat{flex:1;overflow-y:auto;padding:12px 16px 6px;position:relative;z-index:1;scroll-behavior:smooth;min-height:0}
-.chat::-webkit-scrollbar{width:2px}
-.chat::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+/* Chat */
+.chat{flex:1;overflow-y:auto;padding:12px 16px 8px;scroll-behavior:smooth;min-height:0}
+.chat::-webkit-scrollbar{width:3px}
+.chat::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 .ddiv{text-align:center;margin:6px 0 12px}
 .ddiv span{font-size:11px;color:var(--muted);background:var(--card);padding:3px 12px;border-radius:20px;border:1px solid var(--border)}
 .msg{display:flex;gap:8px;margin-bottom:12px;animation:msgIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both}
@@ -82,61 +99,50 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);max
 .mav{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:2px}
 .msg.ai .mav{background:linear-gradient(135deg,var(--p1),var(--p2))}
 .msg.user .mav{background:linear-gradient(135deg,var(--p3),var(--p2))}
-.mbody{max-width:78%}
+.mbody{max-width:80%}
 .mbub{padding:11px 15px;border-radius:18px;font-size:14px;line-height:1.6;word-break:break-word}
-.msg.ai .mbub{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-bottom-left-radius:4px;backdrop-filter:blur(10px)}
+.msg.ai .mbub{background:rgba(255,255,255,0.07);border:1px solid var(--border);border-bottom-left-radius:4px}
 .msg.user .mbub{background:linear-gradient(135deg,var(--p2),var(--p3));border-bottom-right-radius:4px;color:#fff}
 .mtime{font-size:10px;color:var(--muted);margin-top:3px;padding:0 3px}
 .msg.user .mtime{text-align:right}
-.msg.ai.spk .mbub{border-color:rgba(245,158,11,0.35);box-shadow:0 0 16px rgba(245,158,11,0.08)}
 
 /* Typing */
-.twrap{padding:0 16px 6px;display:none}
+.twrap{padding:0 16px 6px;display:none;flex-shrink:0}
 .twrap.on{display:block}
 .tdots{display:inline-flex;gap:4px;align-items:center;padding:10px 14px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:16px;border-bottom-left-radius:4px}
 .dot{width:7px;height:7px;border-radius:50%;animation:db 1.2s ease-in-out infinite}
 .dot:nth-child(1){background:var(--p1)}.dot:nth-child(2){background:var(--p2);animation-delay:0.2s}.dot:nth-child(3){background:var(--p3);animation-delay:0.4s}
-@keyframes db{0%,60%,100%{transform:translateY(0) scale(1)}30%{transform:translateY(-7px) scale(1.1)}}
+@keyframes db{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
 
 /* Input */
-.inputarea{position:relative;z-index:2;padding:8px 14px 26px;background:rgba(7,7,26,0.92);backdrop-filter:blur(24px);border-top:1px solid var(--border);flex-shrink:0}
+.inputarea{padding:10px 16px 16px;border-top:1px solid var(--border);flex-shrink:0}
 .irow{display:flex;gap:8px;align-items:flex-end}
 .micbtn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--p2),var(--p3));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:all 0.2s;box-shadow:0 4px 16px rgba(168,85,247,0.4)}
 .micbtn:active{transform:scale(0.9)}
 .micbtn.listening{background:linear-gradient(135deg,#818cf8,#6366f1);animation:micpulse 0.8s ease-in-out infinite}
 @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(129,140,248,0.5)}50%{box-shadow:0 0 0 12px rgba(129,140,248,0)}}
-.ibox{flex:1;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:22px;padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;resize:none;max-height:90px;backdrop-filter:blur(10px);transition:border 0.2s;line-height:1.5}
-.ibox:focus{border-color:rgba(244,114,182,0.4)}
+.ibox{flex:1;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:22px;padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;resize:none;max-height:100px;transition:border 0.2s;line-height:1.5}
+.ibox:focus{border-color:rgba(244,114,182,0.4);background:rgba(244,114,182,0.04)}
 .ibox::placeholder{color:var(--muted)}
-.sendbtn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--p2));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:all 0.2s;box-shadow:0 4px 16px rgba(244,114,182,0.4)}
+.sendbtn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--p2));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 4px 16px rgba(244,114,182,0.4);transition:all 0.2s}
 .sendbtn:active{transform:scale(0.9)}
 
 /* Panel */
-.panel{position:fixed;inset:0;z-index:200;background:rgba(7,7,26,0.97);backdrop-filter:blur(30px);padding:56px 20px 20px;overflow-y:auto;transform:translateX(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1)}
+.panel{position:fixed;inset:0;z-index:200;background:rgba(7,7,26,0.97);backdrop-filter:blur(30px);padding:56px 24px 24px;overflow-y:auto;transform:translateX(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1)}
 .panel.open{transform:translateX(0)}
-.ptitle{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:20px}
-.pclose{position:absolute;top:14px;right:16px;width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all 0.2s}
-.pclose:active{transform:scale(0.9)}
+.ptitle{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:22px}
+.pclose{position:absolute;top:14px;right:16px;width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
 .psec{margin-bottom:18px}
 .pseclabel{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
 .pitem{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:8px}
 .plabel{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px}
-.pbtn{width:100%;padding:12px;background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;transition:transform 0.2s}
-.pbtn:active{transform:scale(0.98)}
+.pbtn{width:100%;padding:12px;background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px}
 .pdanger{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.18)}
-
-/* Memory panel */
 .memval{font-size:13px;font-weight:500;color:var(--text)}
 
 /* Toast */
-.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%) translateY(14px);background:rgba(7,7,26,0.97);color:#fff;border:1px solid var(--border);backdrop-filter:blur(20px);padding:9px 20px;border-radius:12px;font-size:13px;font-weight:600;opacity:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:300;white-space:nowrap;pointer-events:none}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(14px);background:rgba(7,7,26,0.97);color:#fff;border:1px solid var(--border);backdrop-filter:blur(20px);padding:10px 22px;border-radius:12px;font-size:13px;font-weight:600;opacity:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:300;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* Live2D loading */
-.l2d-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(7,7,26,0.8)}
-.l2d-spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--p1);border-radius:50%;animation:spin 0.8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.l2d-txt{font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -147,65 +153,77 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);max
   <div class="setup-avatar">🌸</div>
   <div class="setup-title">Meet Ananya</div>
   <div class="setup-sub">Your funny, sweet AI best friend ✨<br>Always listening. Always there for you.</div>
-  <input class="sinput" type="password" id="groqKey" placeholder="🤖 Groq API Key">
-  <input class="sinput" type="password" id="elevenKey" placeholder="🎤 ElevenLabs API Key">
-  <input class="sinput" type="text" id="voiceId" placeholder="🔊 ElevenLabs Voice ID">
-  <input class="sinput" type="text" id="uname" placeholder="👤 Your name">
-  <button class="sbtn" onclick="startApp()">Meet Ananya! 💕</button>
-  <div class="snote">Your keys are stored only on your device 🔒</div>
-</div>
-
-<!-- Live2D Area -->
-<div class="live2d-area" id="live2dArea">
-  <canvas id="live2d-canvas"></canvas>
-  <div class="live2d-overlay">
-    <div class="live2d-glow"></div>
-  </div>
-  <div class="l2d-loading" id="l2dLoading">
-    <div class="l2d-spinner"></div>
-    <div class="l2d-txt">Loading Ananya...</div>
+  <div class="sform">
+    <input class="sinput" type="password" id="groqKey" placeholder="🤖 Groq API Key">
+    <input class="sinput" type="password" id="elevenKey" placeholder="🎤 ElevenLabs API Key">
+    <input class="sinput" type="text" id="voiceId" placeholder="🔊 ElevenLabs Voice ID">
+    <input class="sinput" type="text" id="uname" placeholder="👤 Your name">
+    <button class="sbtn" onclick="startApp()">Meet Ananya! 💕</button>
+    <div class="snote">Your keys are stored only on your device 🔒</div>
   </div>
 </div>
 
-<!-- Status Bar -->
-<div class="statusbar">
-  <div class="sbar-row">
-    <div class="odot online" id="odot"></div>
-    <div class="sbar-name">Ananya</div>
-    <div class="sbar-status online" id="hstatus">Tap mic to talk 🎤</div>
-    <div class="sbar-btns">
-      <div class="sbarbtn" onclick="openMemory()">🧠</div>
-      <div class="sbarbtn" onclick="openSettings()">⚙️</div>
-      <div class="sbarbtn" onclick="clearChat()">🗑️</div>
+<!-- Main Layout -->
+<div class="main-layout">
+
+  <!-- Left: Live2D -->
+  <div class="left-panel">
+    <div class="live2d-wrap" id="live2dArea">
+      <canvas id="live2d-canvas"></canvas>
+      <div class="live2d-glow-top"></div>
+      <div class="live2d-glow-bottom"></div>
+      <div class="l2d-loading" id="l2dLoading">
+        <div class="l2d-spinner"></div>
+        <div class="l2d-txt">Loading Ananya...</div>
+      </div>
+    </div>
+    <div class="name-badge">
+      <div class="name-badge-name">Ananya</div>
+      <div class="name-badge-status online" id="hstatus">Tap mic to talk 🎤</div>
     </div>
   </div>
-  <div class="voicebar" id="voicebar">
-    <div class="vwaves">
-      <div class="vw" style="height:5px" id="vw1"></div>
-      <div class="vw" style="height:9px" id="vw2"></div>
-      <div class="vw" style="height:6px" id="vw3"></div>
-      <div class="vw" style="height:13px" id="vw4"></div>
-      <div class="vw" style="height:7px" id="vw5"></div>
-      <div class="vw" style="height:11px" id="vw6"></div>
-      <div class="vw" style="height:5px" id="vw7"></div>
+
+  <!-- Right: Chat -->
+  <div class="right-panel">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="odot online" id="odot"></div>
+      <div class="topbar-name">Ananya</div>
+      <div class="topbar-status online" id="topstatus">Online ✨</div>
+      <div class="tbtn" onclick="openMemory()">🧠</div>
+      <div class="tbtn" onclick="openSettings()">⚙️</div>
+      <div class="tbtn" onclick="clearChat()">🗑️</div>
     </div>
-    <span class="vtxt" id="vtxt">Tap mic or type to chat</span>
-    <span class="vstop" id="vstop" onclick="interrupt()">⏹ Stop</span>
-  </div>
-</div>
 
-<!-- Chat -->
-<div class="chat" id="chat"><div class="ddiv"><span>Today</span></div></div>
+    <!-- Voice bar -->
+    <div class="voicebar" id="voicebar">
+      <div class="vwaves">
+        <div class="vw" style="height:5px"></div>
+        <div class="vw" style="height:9px"></div>
+        <div class="vw" style="height:6px"></div>
+        <div class="vw" style="height:13px"></div>
+        <div class="vw" style="height:7px"></div>
+        <div class="vw" style="height:11px"></div>
+        <div class="vw" style="height:5px"></div>
+      </div>
+      <span class="vtxt" id="vtxt">Tap mic or type to chat</span>
+      <span class="vstop" id="vstop" onclick="interrupt()">⏹ Stop</span>
+    </div>
 
-<!-- Typing -->
-<div class="twrap" id="typing"><div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+    <!-- Chat -->
+    <div class="chat" id="chat"><div class="ddiv"><span>Today</span></div></div>
 
-<!-- Input -->
-<div class="inputarea">
-  <div class="irow">
-    <div class="micbtn" id="micbtn" onclick="toggleListen()">🎤</div>
-    <textarea class="ibox" id="input" placeholder="Or type here..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-    <div class="sendbtn" onclick="sendText()">➤</div>
+    <!-- Typing -->
+    <div class="twrap" id="typing"><div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+
+    <!-- Input -->
+    <div class="inputarea">
+      <div class="irow">
+        <div class="micbtn" id="micbtn" onclick="toggleListen()">🎤</div>
+        <textarea class="ibox" id="input" placeholder="Or type here..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <div class="sendbtn" onclick="sendText()">➤</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -253,6 +271,7 @@ function toast(m,d=2500){const t=document.getElementById('toast');t.textContent=
 // ── Status ──
 function setStatus(mode){
   const s=document.getElementById('hstatus');
+  const ts=document.getElementById('topstatus');
   const dot=document.getElementById('odot');
   const bar=document.getElementById('voicebar');
   const txt=document.getElementById('vtxt');
@@ -260,7 +279,8 @@ function setStatus(mode){
   const waves=document.querySelectorAll('.vw');
   const mic=document.getElementById('micbtn');
   if(mode==='listening'){
-    s.textContent='Listening... 🎤';s.className='sbar-status listening';
+    if(s){s.textContent='Listening... 🎤';s.className='name-badge-status listening';}
+    if(ts){ts.textContent='Listening... 🎤';ts.className='topbar-status listening';}
     dot.className='odot listening';
     bar.className='voicebar listening';
     txt.textContent='Listening...';txt.style.color='#818cf8';
@@ -268,7 +288,8 @@ function setStatus(mode){
     stop.style.display='none';
     mic.classList.add('listening');mic.textContent='⏹';
   } else if(mode==='speaking'){
-    s.textContent='Speaking... 🔊';s.className='sbar-status speaking';
+    if(s){s.textContent='Speaking... 🔊';s.className='name-badge-status speaking';}
+    if(ts){ts.textContent='Speaking... 🔊';ts.className='topbar-status speaking';}
     dot.className='odot speaking';
     bar.className='voicebar speaking';
     txt.textContent='Ananya is speaking — tap Stop to interrupt';txt.style.color='#f59e0b';
@@ -276,7 +297,8 @@ function setStatus(mode){
     stop.style.display='block';
     mic.classList.remove('listening');mic.textContent='🎤';
   } else if(mode==='thinking'){
-    s.textContent='Thinking... 💭';s.className='sbar-status';
+    if(s){s.textContent='Thinking... 💭';s.className='name-badge-status';}
+    if(ts){ts.textContent='Thinking... 💭';ts.className='topbar-status';}
     dot.className='odot online';
     bar.className='voicebar';
     txt.textContent='Thinking...';txt.style.color='var(--muted)';
@@ -284,7 +306,8 @@ function setStatus(mode){
     stop.style.display='none';
     mic.classList.remove('listening');mic.textContent='🎤';
   } else {
-    s.textContent='Tap mic to talk 🎤';s.className='sbar-status online';
+    if(s){s.textContent='Always here for you ✨';s.className='name-badge-status online';}
+    if(ts){ts.textContent='Online ✨';ts.className='topbar-status online';}
     dot.className='odot online';
     bar.className='voicebar';
     txt.textContent='Tap mic or type to chat';txt.style.color='var(--muted)';
@@ -353,10 +376,10 @@ async function initLive2D(){
       autoInteract:false
     });
 
-    const scale=W/900;
+    const scale=H/900;
     live2dModel.scale.set(scale);
     live2dModel.anchor.set(0.5,0);
-    live2dModel.position.set(W/2,0);
+    live2dModel.position.set(W/2, H*0.05);
     live2dModel.interactive=true;
     live2dModel.on('pointerdown',()=>{try{live2dModel.motion('tap_body');}catch(e){}});
     app.stage.addChild(live2dModel);

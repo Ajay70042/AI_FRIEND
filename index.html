@@ -69,12 +69,13 @@ body{font-family:'DM Sans',sans-serif;color:var(--text)}
 .chat-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
 
 /* Gemini-style message bubbles */
-.msg{display:flex;gap:8px;margin-bottom:8px;animation:msgIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both}
-@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.msg.user{flex-direction:row-reverse}
-.mbub{max-width:70%;padding:10px 16px;border-radius:20px;font-size:14px;line-height:1.6;word-break:break-word;backdrop-filter:blur(20px)}
-.msg.ai .mbub{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.12);border-bottom-left-radius:4px;color:#fff}
-.msg.user .mbub{background:linear-gradient(135deg,rgba(168,85,247,0.7),rgba(99,102,241,0.7));border:1px solid rgba(168,85,247,0.3);border-bottom-right-radius:4px;color:#fff;margin-left:auto}
+.msg{display:flex;justify-content:center;margin-bottom:6px;animation:msgIn 0.4s ease both}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{justify-content:flex-end}
+.msg.ai{justify-content:flex-start}
+.mbub{max-width:85%;padding:10px 18px;border-radius:20px;font-size:15px;line-height:1.6;word-break:break-word;backdrop-filter:blur(20px)}
+.msg.ai .mbub{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.9);font-style:italic}
+.msg.user .mbub{background:rgba(168,85,247,0.3);border:1px solid rgba(168,85,247,0.25);color:#fff}
 
 /* Typing dots */
 .twrap{padding:0 20px 6px;display:none}
@@ -594,14 +595,56 @@ function stopListening(){
 // ── Messages ──
 function addMsg(text,role){
   const c=document.getElementById('chat');
+  // Only show user messages as text — AI speaks via voice
+  if(role==='ai') return document.createElement('div'); // don't show AI text
+  // Remove old messages — keep only last 1
+  while(c.children.length > 0) c.removeChild(c.firstChild);
   const d=document.createElement('div');
   d.className=`msg ${role}`;
-  const t=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  d.innerHTML=`<div class="mav">${role==='ai'?'🌸':'😊'}</div><div class="mbody"><div class="mbub">${text.replace(/\n/g,'<br>')}</div><div class="mtime">${t}</div></div>`;
+  d.innerHTML=`<div class="mbub">${text.replace(/\n/g,'<br>')}</div>`;
   c.appendChild(d);
   c.scrollTop=c.scrollHeight;
-  if(role==='ai')d.classList.add('spk');
   return d;
+}
+
+function setExpression(text){
+  if(!live2dModel||!live2dModel.internalModel) return;
+  const l=text.toLowerCase();
+  try{
+    const core=live2dModel.internalModel.coreModel;
+    if(l.includes('haha')||l.includes('funny')||l.includes('laugh')){
+      core.setParameterValueById('ParamEyeLSmile',1);
+      core.setParameterValueById('ParamEyeRSmile',1);
+      core.setParameterValueById('ParamBrowLY',0.5);
+      core.setParameterValueById('ParamBrowRY',0.5);
+      try{live2dModel.expression('f01');}catch(e){}
+    } else if(l.includes('jealous')||l.includes('annoyed')||l.includes('excuse me')){
+      core.setParameterValueById('ParamBrowLAngle',-1);
+      core.setParameterValueById('ParamBrowRAngle',-1);
+      core.setParameterValueById('ParamBrowLY',-0.5);
+      core.setParameterValueById('ParamBrowRY',-0.5);
+      try{live2dModel.expression('f02');}catch(e){}
+    } else if(l.includes('oh my god')||l.includes('wow')||l.includes('seriously')||l.includes('what')){
+      core.setParameterValueById('ParamEyeLOpen',1.5);
+      core.setParameterValueById('ParamEyeROpen',1.5);
+      core.setParameterValueById('ParamBrowLY',1);
+      core.setParameterValueById('ParamBrowRY',1);
+      try{live2dModel.expression('f03');}catch(e){}
+    } else if(l.includes('aww')||l.includes('sweet')||l.includes('love')||l.includes('miss')){
+      core.setParameterValueById('ParamEyeLSmile',0.7);
+      core.setParameterValueById('ParamEyeRSmile',0.7);
+      try{live2dModel.expression('f04');}catch(e){}
+    } else {
+      core.setParameterValueById('ParamEyeLSmile',0);
+      core.setParameterValueById('ParamEyeRSmile',0);
+      core.setParameterValueById('ParamBrowLAngle',0);
+      core.setParameterValueById('ParamBrowRAngle',0);
+      core.setParameterValueById('ParamBrowLY',0);
+      core.setParameterValueById('ParamBrowRY',0);
+      core.setParameterValueById('ParamEyeLOpen',1);
+      core.setParameterValueById('ParamEyeROpen',1);
+    }
+  }catch(e){}
 }
 
 async function processMessage(text){
@@ -612,6 +655,7 @@ async function processMessage(text){
   try{
     const reply=await getAIReply(text);
     document.getElementById('typing').classList.remove('on');
+    setExpression(reply);
     addMsg(reply,'ai');
     extractMemory(text,reply);
     resetSilence();

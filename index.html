@@ -10,17 +10,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--p1:#f472b6;--p2:#a855f7;--p3:#6366f1;--bg:#07071a;--card:rgba(255,255,255,0.06);--border:rgba(255,255,255,0.1);--text:#f0f0ff;--muted:rgba(240,240,255,0.45)}
+:root{--p1:#f472b6;--p2:#a855f7;--p3:#6366f1;--bg:#07071a;--border:rgba(255,255,255,0.1);--text:#f0f0ff;--muted:rgba(240,240,255,0.45)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'DM Sans',sans-serif;color:var(--text)}
 
-/* BG */
+/* BG blobs */
 .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .blob{position:absolute;border-radius:50%;filter:blur(100px);animation:float 12s ease-in-out infinite}
-.b1{width:500px;height:500px;background:rgba(244,114,182,0.15);top:-200px;left:-100px}
-.b2{width:400px;height:400px;background:rgba(168,85,247,0.12);bottom:0;right:-100px;animation-delay:-5s}
-.b3{width:350px;height:350px;background:rgba(99,102,241,0.12);top:30%;left:30%;animation-delay:-9s}
+.b1{width:600px;height:600px;background:rgba(244,114,182,0.12);top:-200px;left:-150px}
+.b2{width:500px;height:500px;background:rgba(168,85,247,0.1);bottom:-100px;right:-150px;animation-delay:-5s}
+.b3{width:400px;height:400px;background:rgba(99,102,241,0.1);top:20%;left:20%;animation-delay:-9s}
 @keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-20px)}}
 
 /* Setup */
@@ -31,117 +31,97 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
 .setup-sub{font-size:15px;color:var(--muted);text-align:center;margin-bottom:28px;line-height:1.7;max-width:400px}
 .sform{width:100%;max-width:420px}
 .sinput{width:100%;padding:14px 18px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;margin-bottom:10px;transition:border 0.2s}
-.sinput:focus{border-color:var(--p1);background:rgba(244,114,182,0.06)}
+.sinput:focus{border-color:var(--p1)}
 .sinput::placeholder{color:var(--muted)}
 .sbtn{width:100%;padding:15px;background:linear-gradient(135deg,var(--p1),var(--p2),var(--p3));color:#fff;border:none;border-radius:14px;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;box-shadow:0 8px 30px rgba(244,114,182,0.4);transition:transform 0.2s}
 .sbtn:active{transform:scale(0.97)}
 .snote{font-size:11px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.7}
 
-/* Main layout — PC style side by side */
-.main-layout{position:relative;z-index:1;display:flex;height:100vh;width:100%}
+/* Fullscreen Live2D canvas */
+#live2d-canvas{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;display:block}
 
-/* Left — Live2D */
-.left-panel{width:55%;height:100vh;position:relative;display:flex;flex-direction:column;flex-shrink:0}
-.live2d-wrap{flex:1;position:relative;overflow:hidden}
-#live2d-canvas{width:100%;height:100%;display:block}
-.live2d-glow-bottom{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(to top,var(--bg),transparent);pointer-events:none;z-index:2}
-.live2d-glow-top{position:absolute;top:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,var(--bg),transparent);pointer-events:none;z-index:2}
-.name-badge{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:3;text-align:center}
-.name-badge-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.name-badge-status{font-size:12px;color:var(--muted);margin-top:2px;transition:color 0.3s}
-.name-badge-status.speaking{color:#f59e0b}
-.name-badge-status.listening{color:#818cf8}
-.name-badge-status.online{color:#10b981}
-
-/* Loading overlay */
-.l2d-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:10}
+/* Loading */
+.l2d-loading{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
 .l2d-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--p1);border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .l2d-txt{font-size:13px;color:var(--muted)}
 
-/* Right — Chat */
-.right-panel{flex:1;display:flex;flex-direction:column;height:100vh;border-left:1px solid var(--border);background:rgba(7,7,26,0.6);backdrop-filter:blur(20px)}
-
-/* Top bar */
-.topbar{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+/* Top bar — floating */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:10;padding:16px 20px;display:flex;align-items:center;gap:12px;background:linear-gradient(to bottom,rgba(7,7,26,0.8),transparent)}
 .odot{width:10px;height:10px;border-radius:50%;background:#10b981;transition:background 0.3s;flex-shrink:0}
 .odot.speaking{background:#f59e0b;animation:blink 0.6s ease-in-out infinite}
 .odot.listening{background:#818cf8;animation:blink 0.6s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-.topbar-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.topbar-status{font-size:12px;color:var(--muted);flex:1;transition:color 0.3s}
+.topbar-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--p1),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-status{font-size:12px;color:rgba(255,255,255,0.6);flex:1;transition:color 0.3s}
 .topbar-status.speaking{color:#f59e0b}
 .topbar-status.listening{color:#818cf8}
 .topbar-status.online{color:#10b981}
-.tbtn{width:34px;height:34px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:all 0.2s}
-.tbtn:active{transform:scale(0.88)}
+.tbtn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:all 0.2s}
+.tbtn:active{transform:scale(0.88);background:rgba(255,255,255,0.2)}
 
-/* Voice bar */
-.voicebar{margin:0 16px 8px;padding:8px 14px;border-radius:12px;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border);transition:all 0.3s;flex-shrink:0}
-.voicebar.listening{background:rgba(99,102,241,0.08);border-color:rgba(99,102,241,0.2)}
-.voicebar.speaking{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.2)}
-.vwaves{display:flex;gap:2px;align-items:center}
-.vw{width:3px;border-radius:3px;background:var(--muted);transition:background 0.3s}
-.vw.active{animation:vwave 0.6s ease-in-out infinite}
-@keyframes vwave{0%,100%{transform:scaleY(0.3)}50%{transform:scaleY(1)}}
-.vtxt{font-size:11px;font-weight:600;color:var(--muted);flex:1;transition:color 0.3s}
-.vstop{font-size:11px;color:var(--muted);background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:7px;padding:3px 10px;cursor:pointer;display:none;white-space:nowrap}
+/* Bottom overlay — Gemini Live style */
+.bottom-overlay{position:fixed;bottom:0;left:0;right:0;z-index:10;padding:0 0 20px;background:linear-gradient(to top,rgba(7,7,26,0.95) 0%,rgba(7,7,26,0.7) 60%,transparent 100%)}
 
-/* Chat */
-.chat{flex:1;overflow-y:auto;padding:12px 16px 8px;scroll-behavior:smooth;min-height:0}
-.chat::-webkit-scrollbar{width:3px}
-.chat::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-.ddiv{text-align:center;margin:6px 0 12px}
-.ddiv span{font-size:11px;color:var(--muted);background:var(--card);padding:3px 12px;border-radius:20px;border:1px solid var(--border)}
-.msg{display:flex;gap:8px;margin-bottom:12px;animation:msgIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both}
-@keyframes msgIn{from{opacity:0;transform:translateY(12px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+/* Chat messages — floating at bottom */
+.chat-messages{max-height:200px;overflow-y:auto;padding:16px 20px 10px;scroll-behavior:smooth}
+.chat-messages::-webkit-scrollbar{width:2px}
+.chat-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+
+/* Gemini-style message bubbles */
+.msg{display:flex;gap:8px;margin-bottom:8px;animation:msgIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .msg.user{flex-direction:row-reverse}
-.mav{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:2px}
-.msg.ai .mav{background:linear-gradient(135deg,var(--p1),var(--p2))}
-.msg.user .mav{background:linear-gradient(135deg,var(--p3),var(--p2))}
-.mbody{max-width:80%}
-.mbub{padding:11px 15px;border-radius:18px;font-size:14px;line-height:1.6;word-break:break-word}
-.msg.ai .mbub{background:rgba(255,255,255,0.07);border:1px solid var(--border);border-bottom-left-radius:4px}
-.msg.user .mbub{background:linear-gradient(135deg,var(--p2),var(--p3));border-bottom-right-radius:4px;color:#fff}
-.mtime{font-size:10px;color:var(--muted);margin-top:3px;padding:0 3px}
-.msg.user .mtime{text-align:right}
+.mbub{max-width:70%;padding:10px 16px;border-radius:20px;font-size:14px;line-height:1.6;word-break:break-word;backdrop-filter:blur(20px)}
+.msg.ai .mbub{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.12);border-bottom-left-radius:4px;color:#fff}
+.msg.user .mbub{background:linear-gradient(135deg,rgba(168,85,247,0.7),rgba(99,102,241,0.7));border:1px solid rgba(168,85,247,0.3);border-bottom-right-radius:4px;color:#fff;margin-left:auto}
 
-/* Typing */
-.twrap{padding:0 16px 6px;display:none;flex-shrink:0}
+/* Typing dots */
+.twrap{padding:0 20px 6px;display:none}
 .twrap.on{display:block}
-.tdots{display:inline-flex;gap:4px;align-items:center;padding:10px 14px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:16px;border-bottom-left-radius:4px}
+.tdots{display:inline-flex;gap:4px;align-items:center;padding:10px 14px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.12);border-radius:16px;border-bottom-left-radius:4px;backdrop-filter:blur(20px)}
 .dot{width:7px;height:7px;border-radius:50%;animation:db 1.2s ease-in-out infinite}
 .dot:nth-child(1){background:var(--p1)}.dot:nth-child(2){background:var(--p2);animation-delay:0.2s}.dot:nth-child(3){background:var(--p3);animation-delay:0.4s}
 @keyframes db{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-7px)}}
 
-/* Input */
-.inputarea{padding:10px 16px 16px;border-top:1px solid var(--border);flex-shrink:0}
-.irow{display:flex;gap:8px;align-items:flex-end}
-.micbtn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--p2),var(--p3));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:all 0.2s;box-shadow:0 4px 16px rgba(168,85,247,0.4)}
+/* Voice waves bar */
+.voicebar{margin:0 16px 10px;padding:8px 16px;border-radius:30px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);backdrop-filter:blur(20px);transition:all 0.3s}
+.voicebar.listening{background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.3)}
+.voicebar.speaking{background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3)}
+.vwaves{display:flex;gap:3px;align-items:center}
+.vw{width:3px;border-radius:3px;background:rgba(255,255,255,0.3);transition:background 0.3s}
+.vw.active{animation:vwave 0.6s ease-in-out infinite}
+@keyframes vwave{0%,100%{transform:scaleY(0.3)}50%{transform:scaleY(1)}}
+.vtxt{font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);flex:1}
+.vstop{font-size:11px;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;cursor:pointer;display:none;white-space:nowrap}
+
+/* Input row */
+.inputarea{padding:0 16px 4px;display:flex;gap:8px;align-items:flex-end}
+.micbtn{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--p2));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;transition:all 0.2s;box-shadow:0 4px 20px rgba(244,114,182,0.5)}
 .micbtn:active{transform:scale(0.9)}
-.micbtn.listening{background:linear-gradient(135deg,#818cf8,#6366f1);animation:micpulse 0.8s ease-in-out infinite}
-@keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(129,140,248,0.5)}50%{box-shadow:0 0 0 12px rgba(129,140,248,0)}}
-.ibox{flex:1;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:22px;padding:12px 16px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;resize:none;max-height:100px;transition:border 0.2s;line-height:1.5}
-.ibox:focus{border-color:rgba(244,114,182,0.4);background:rgba(244,114,182,0.04)}
-.ibox::placeholder{color:var(--muted)}
-.sendbtn{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--p2));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 4px 16px rgba(244,114,182,0.4);transition:all 0.2s}
+.micbtn.listening{animation:micpulse 0.8s ease-in-out infinite}
+@keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(244,114,182,0.6)}50%{box-shadow:0 0 0 16px rgba(244,114,182,0)}}
+.ibox{flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:24px;padding:13px 18px;font-family:'DM Sans',sans-serif;font-size:14px;color:#fff;outline:none;resize:none;max-height:100px;backdrop-filter:blur(20px);transition:border 0.2s;line-height:1.5}
+.ibox:focus{border-color:rgba(244,114,182,0.5);background:rgba(244,114,182,0.08)}
+.ibox::placeholder{color:rgba(255,255,255,0.35)}
+.sendbtn{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--p2),var(--p3));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;box-shadow:0 4px 16px rgba(99,102,241,0.4);transition:all 0.2s}
 .sendbtn:active{transform:scale(0.9)}
 
 /* Panel */
 .panel{position:fixed;inset:0;z-index:200;background:rgba(7,7,26,0.97);backdrop-filter:blur(30px);padding:56px 24px 24px;overflow-y:auto;transform:translateX(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1)}
 .panel.open{transform:translateX(0)}
 .ptitle{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:22px}
-.pclose{position:absolute;top:14px;right:16px;width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
+.pclose{position:absolute;top:14px;right:16px;width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
 .psec{margin-bottom:18px}
 .pseclabel{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.pitem{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.pitem{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:8px}
 .plabel{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px}
 .pbtn{width:100%;padding:12px;background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px}
 .pdanger{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.18)}
 .memval{font-size:13px;font-weight:500;color:var(--text)}
 
 /* Toast */
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(14px);background:rgba(7,7,26,0.97);color:#fff;border:1px solid var(--border);backdrop-filter:blur(20px);padding:10px 22px;border-radius:12px;font-size:13px;font-weight:600;opacity:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:300;white-space:nowrap;pointer-events:none}
+.toast{position:fixed;bottom:120px;left:50%;transform:translateX(-50%) translateY(14px);background:rgba(7,7,26,0.97);color:#fff;border:1px solid var(--border);backdrop-filter:blur(20px);padding:10px 22px;border-radius:12px;font-size:13px;font-weight:600;opacity:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);z-index:300;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
@@ -163,67 +143,51 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);dis
   </div>
 </div>
 
-<!-- Main Layout -->
-<div class="main-layout">
+<!-- Fullscreen Live2D -->
+<canvas id="live2d-canvas"></canvas>
+<div class="l2d-loading" id="l2dLoading">
+  <div class="l2d-spinner"></div>
+  <div class="l2d-txt">Loading Ananya...</div>
+</div>
 
-  <!-- Left: Live2D -->
-  <div class="left-panel">
-    <div class="live2d-wrap" id="live2dArea">
-      <canvas id="live2d-canvas"></canvas>
-      <div class="live2d-glow-top"></div>
-      <div class="live2d-glow-bottom"></div>
-      <div class="l2d-loading" id="l2dLoading">
-        <div class="l2d-spinner"></div>
-        <div class="l2d-txt">Loading Ananya...</div>
-      </div>
+<!-- Top bar floating -->
+<div class="topbar">
+  <div class="odot online" id="odot"></div>
+  <div class="topbar-name">Ananya</div>
+  <div class="topbar-status online" id="hstatus">Always here for you ✨</div>
+  <div class="tbtn" onclick="openMemory()">🧠</div>
+  <div class="tbtn" onclick="openSettings()">⚙️</div>
+  <div class="tbtn" onclick="clearChat()">🗑️</div>
+</div>
+
+<!-- Bottom overlay — Gemini Live style -->
+<div class="bottom-overlay">
+  <!-- Chat messages -->
+  <div class="chat-messages" id="chat"></div>
+
+  <!-- Typing -->
+  <div class="twrap" id="typing"><div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+
+  <!-- Voice bar -->
+  <div class="voicebar" id="voicebar">
+    <div class="vwaves">
+      <div class="vw" style="height:5px"></div>
+      <div class="vw" style="height:9px"></div>
+      <div class="vw" style="height:6px"></div>
+      <div class="vw" style="height:13px"></div>
+      <div class="vw" style="height:7px"></div>
+      <div class="vw" style="height:11px"></div>
+      <div class="vw" style="height:5px"></div>
     </div>
-    <div class="name-badge">
-      <div class="name-badge-name">Ananya</div>
-      <div class="name-badge-status online" id="hstatus">Tap mic to talk 🎤</div>
-    </div>
+    <span class="vtxt" id="vtxt">Tap mic or type to chat</span>
+    <span class="vstop" id="vstop" onclick="interrupt()">⏹ Stop</span>
   </div>
 
-  <!-- Right: Chat -->
-  <div class="right-panel">
-    <!-- Top bar -->
-    <div class="topbar">
-      <div class="odot online" id="odot"></div>
-      <div class="topbar-name">Ananya</div>
-      <div class="topbar-status online" id="topstatus">Online ✨</div>
-      <div class="tbtn" onclick="openMemory()">🧠</div>
-      <div class="tbtn" onclick="openSettings()">⚙️</div>
-      <div class="tbtn" onclick="clearChat()">🗑️</div>
-    </div>
-
-    <!-- Voice bar -->
-    <div class="voicebar" id="voicebar">
-      <div class="vwaves">
-        <div class="vw" style="height:5px"></div>
-        <div class="vw" style="height:9px"></div>
-        <div class="vw" style="height:6px"></div>
-        <div class="vw" style="height:13px"></div>
-        <div class="vw" style="height:7px"></div>
-        <div class="vw" style="height:11px"></div>
-        <div class="vw" style="height:5px"></div>
-      </div>
-      <span class="vtxt" id="vtxt">Tap mic or type to chat</span>
-      <span class="vstop" id="vstop" onclick="interrupt()">⏹ Stop</span>
-    </div>
-
-    <!-- Chat -->
-    <div class="chat" id="chat"><div class="ddiv"><span>Today</span></div></div>
-
-    <!-- Typing -->
-    <div class="twrap" id="typing"><div class="tdots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
-
-    <!-- Input -->
-    <div class="inputarea">
-      <div class="irow">
-        <div class="micbtn" id="micbtn" onclick="toggleListen()">🎤</div>
-        <textarea class="ibox" id="input" placeholder="Or type here..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-        <div class="sendbtn" onclick="sendText()">➤</div>
-      </div>
-    </div>
+  <!-- Input -->
+  <div class="inputarea">
+    <div class="micbtn" id="micbtn" onclick="toggleListen()">🎤</div>
+    <textarea class="ibox" id="input" placeholder="Talk to Ananya..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <div class="sendbtn" onclick="sendText()">➤</div>
   </div>
 </div>
 
@@ -348,9 +312,8 @@ async function initLive2D(){
     if(typeof PIXI==='undefined') throw new Error('PIXI not loaded');
     if(!PIXI.live2d) throw new Error('pixi-live2d-display not loaded');
 
-    const area=document.getElementById('live2dArea');
-    const W=area.clientWidth||window.innerWidth||430;
-    const H=280;
+    const W=window.innerWidth;
+    const H=window.innerHeight;
 
     app=new PIXI.Application({
       width:W, height:H, transparent:true, antialias:true,
@@ -359,7 +322,7 @@ async function initLive2D(){
 
     const oldCanvas=document.getElementById('live2d-canvas');
     app.view.id='live2d-canvas';
-    app.view.style.cssText='width:100%;height:100%;display:block;';
+    app.view.style.cssText='position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;pointer-events:none;';
     oldCanvas.parentNode.replaceChild(app.view,oldCanvas);
 
     PIXI.live2d.Live2DModel.registerTicker(PIXI.Ticker);
@@ -376,10 +339,11 @@ async function initLive2D(){
       autoInteract:false
     });
 
-    const scale=H/900;
+    // Scale to fill screen height nicely
+    const scale = H / 800;
     live2dModel.scale.set(scale);
-    live2dModel.anchor.set(0.5,0);
-    live2dModel.position.set(W/2, H*0.05);
+    live2dModel.anchor.set(0.5, 0);
+    live2dModel.position.set(W/2, H * 0.02);
     live2dModel.interactive=true;
     live2dModel.on('pointerdown',()=>{try{live2dModel.motion('tap_body');}catch(e){}});
     app.stage.addChild(live2dModel);

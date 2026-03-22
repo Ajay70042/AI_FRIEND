@@ -238,7 +238,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);max
 
 <!-- Live2D SDK -->
 <script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js"></script>
+<script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js"></script>
 
 <script>
 let groqKey='', elevenKey='', voiceId='', userName='friend';
@@ -332,7 +333,7 @@ async function initLive2D(){
       autoDensity:true
     });
 
-    PIXI.live2d.Live2DModel.registerTicker(PIXI.Ticker);
+    if(PIXI.live2d && PIXI.live2d.Live2DModel) PIXI.live2d.Live2DModel.registerTicker(PIXI.Ticker);
 
     const modelPath='./hiyori_free_t08.model3.json';
     live2dModel=await PIXI.live2d.Live2DModel.from(modelPath);

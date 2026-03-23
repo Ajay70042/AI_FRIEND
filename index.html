@@ -919,7 +919,8 @@
     let groqKey = '', geminiKey = '', userName = 'friend';
     let history = [], audio = null, isSpk = false, isListening = false, recog = null;
     let silenceTimer = null, live2dModel = null, app = null;
-    const MODEL = 'gemini-2.5-flash';
+    const TTS_MODEL = 'gemini-2.0-flash-exp';  // Supports responseModalities:["AUDIO"]
+    const UTIL_MODEL = 'gemini-2.0-flash';       // For memory extraction etc.
 
     // ── Toast ──
     function toast(m, d = 2500) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), d); }
@@ -1228,7 +1229,7 @@ Current time: ${tod}. React naturally.`;
       let mimeType = null;
       
       try {
-        const gemR = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${geminiKey}`, {
+        const gemR = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${TTS_MODEL}:generateContent?key=${geminiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(ttsReqBody)
@@ -1265,7 +1266,7 @@ Current time: ${tod}. React naturally.`;
           contents: [{ role: "user", parts: [{ text: `Extract personal facts about the user. Return ONLY JSON like {"name":"John","hobby":"cricket"}. If none, return {}. Max 5 facts.\nUser: "${userMsg}"\nAI: "${aiReply}"` }] }],
           generationConfig: { temperature: 0.1 }
         };
-        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${geminiKey}`, {
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${UTIL_MODEL}:generateContent?key=${geminiKey}`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reqBody)
         });
         const d = await r.json();

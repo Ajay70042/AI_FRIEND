@@ -1175,12 +1175,19 @@ Current time: ${tod}. React naturally.`;
         content: h.content
       }));
 
+      const apiMessages = [
+        { role: "system", content: sysPrompt() },
+        ...groqHistory
+      ];
+      
+      // If it's a silent poke or welcome, the msg isn't in history but the AI still needs to see it!
+      if (silentUser) {
+        apiMessages.push({ role: "user", content: msg });
+      }
+
       const groqReqBody = {
-        model: "llama3-8b-8192",
-        messages: [
-          { role: "system", content: sysPrompt() },
-          ...groqHistory
-        ],
+        model: "llama-3.3-70b-versatile",
+        messages: apiMessages,
         temperature: 0.9,
         max_tokens: 150
       };
@@ -1193,7 +1200,10 @@ Current time: ${tod}. React naturally.`;
         },
         body: JSON.stringify(groqReqBody)
       });
-      if (!groqR.ok) throw new Error('Groq error ' + groqR.status);
+      if (!groqR.ok) {
+        const errData = await groqR.json().catch(()=>({}));
+        throw new Error(`Groq error ${groqR.status}: ${JSON.stringify(errData)}`);
+      }
       const groqD = await groqR.json();
       if (!groqD.choices || groqD.choices.length === 0) throw new Error("No response from Groq");
       
